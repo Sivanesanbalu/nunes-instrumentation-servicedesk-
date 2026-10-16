@@ -1,0 +1,14 @@
+import {readFileSync,existsSync} from 'node:fs';
+import assert from 'node:assert/strict';
+const root=new URL('../',import.meta.url);
+const read=(p)=>readFileSync(new URL(p,root),'utf8');
+for(const file of ['app/page.tsx','app/operations.tsx','app/quote-document.tsx','lib/pricing.ts','supabase/schema.sql','supabase/phase2.sql']) assert(existsSync(new URL(file,root)),`Missing ${file}`);
+const schema=read('supabase/schema.sql'),migration=read('supabase/phase2.sql'),ui=read('app/page.tsx'),pdf=read('app/quote-document.tsx');
+assert(schema.includes('enable row level security'),'Database RLS must be present');
+for(const proc of ['advance_service_job','create_service_quote','approve_service_quote','mark_service_quote_shared','decide_service_quote','record_service_inspection']) assert(migration.includes(`function public.${proc}`),`Missing RPC ${proc}`);
+assert(migration.includes('An active quotation already exists'),'Missing duplicate active quotation guard');
+assert(migration.includes('auth.uid()'),'RPCs should use auth checks');
+assert(ui.includes('latest 500 loaded records'),'Dashboard must disclose row cap');
+assert(pdf.includes('noopener noreferrer'),'External WhatsApp link should use safe link attributes');
+console.log('Source checks: PASS (file coverage, RLS, RPC presence, quote uniqueness guard, dashboard data-cap disclosure, safe WhatsApp link).');
+console.log('NOTE: These are STATIC checks, not Next.js compile or Supabase integration tests.');

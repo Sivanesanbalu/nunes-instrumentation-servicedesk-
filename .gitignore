@@ -1,6 +1,13 @@
 node_modules
 .next
-.env
 .env.local
+.env
 *.tsbuildinfo
-.DS_Store
+
+.env.*
+!.env.example
+.vercel
+*.pem
+*.key
+*.sqlite*
+*.db

@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {priceQuote} from '../lib/pricing';
+for (const effort of [0,29])test(`${effort}% requires manual price`,()=>{assert.throws(()=>priceQuote({originalRupees:20000,effort}),/Manual/);assert.equal(priceQuote({originalRupees:20000,effort,manualLaborRupees:1000,taxPercent:0}).laborPaise,100000)});
+for (const effort of [30,50])test(`${effort}% requires manual review`,()=>{assert.throws(()=>priceQuote({originalRupees:20000,effort}),/Manual/);assert.equal(priceQuote({originalRupees:20000,effort,manualLaborRupees:3500,taxPercent:0}).bracket,'review')});
+for(const effort of [51,100])test(`${effort}% charges 50%`,()=>{assert.equal(priceQuote({originalRupees:20000,effort,taxPercent:0}).laborPaise,1000000)});
+test('GST and discount in paise',()=>{const q=priceQuote({originalRupees:20000,effort:60,partsRupees:1000,shippingRupees:100,discountRupees:100,taxPercent:18});assert.equal(q.taxPaise,198000);assert.equal(q.totalPaise,1298000)});
+test('reject invalid amounts',()=>{assert.throws(()=>priceQuote({originalRupees:-1,effort:60}));assert.throws(()=>priceQuote({originalRupees:100,effort:101}));assert.throws(()=>priceQuote({originalRupees:100,effort:80,discountRupees:999}))});
