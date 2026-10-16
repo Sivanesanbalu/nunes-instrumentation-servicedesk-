@@ -11,3 +11,8 @@ node_modules
 *.key
 *.sqlite*
 *.db
+
+.open-next/
+.wrangler/
+.dev.vars
+.dev.vars.*

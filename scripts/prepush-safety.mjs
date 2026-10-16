@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
-const forbidden = [/^\.env$/i, /^\.env\.(?!example$)/i, /(^|\/)\.next\//, /(^|\/)node_modules\//, /(^|\/)\.git\//, /(^|\/)[^/]+\.(?:sqlite|sqlite3|db)$/i, /(^|\/)service[_-]?role[_-]?key/i];
+const forbidden = [/^\.dev\.vars(?:\.|$)/i, /^\.env$/i, /^\.env\.(?!example$)/i, /(^|\/)\.next\//, /(^|\/)node_modules\//, /(^|\/)\.git\//, /(^|\/)[^/]+\.(?:sqlite|sqlite3|db)$/i, /(^|\/)service[_-]?role[_-]?key/i];
 const scanned = [];
 const issues = [];
-const skipDirs = new Set(['node_modules', '.next', '.git']);
+const skipDirs = new Set(['node_modules', '.next', '.git', '.open-next', '.wrangler']);
 function walk(folder, rel = '') {
   for (const item of fs.readdirSync(folder, {withFileTypes:true})) {
     const next = rel ? `${rel}/${item.name}` : item.name;
